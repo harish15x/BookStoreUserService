@@ -26,13 +26,13 @@ public class UserController {
     }
 
     @PostMapping("/adduser")
-    public ResponseEntity<ResponseClass> addUser(@RequestParam UserDTO userDTO){
+    public ResponseEntity<ResponseClass> addUser(@RequestBody UserDTO userDTO){
         ResponseClass responseClass = userService.addUser(userDTO);
         return new ResponseEntity<>(responseClass, HttpStatus.OK);
     }
 
     @PutMapping("update/{userId}")
-    public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, @RequestParam UserDTO userDTO, @PathVariable long userId){
+    public ResponseEntity<ResponseClass> updateUser(@RequestHeader String token, @RequestBody UserDTO userDTO, @PathVariable long userId){
         ResponseClass responseClass = userService.updateUser(token, userDTO, userId);
         return new ResponseEntity<>(responseClass, HttpStatus.OK);
     }
@@ -63,13 +63,17 @@ public class UserController {
     @PutMapping("resetpassword")
     public ResponseEntity<ResponseClass> resetPassword(@PathVariable long userId, @RequestHeader String token, @RequestParam String newPassword){
         ResponseClass responseClass = userService.resetPassword(userId, token, newPassword);
-        return  new ResponseEntity<>(responseClass, HttpStatus.OK);
+        return new ResponseEntity<>(responseClass, HttpStatus.OK);
     }
 
+    @PutMapping("/forgetpassword")
+    public ResponseEntity<ResponseClass> forgetPassword(@RequestParam String emailId){
+        ResponseClass responseClass = userService.forgetPassword(emailId);
+        return new ResponseEntity<>(responseClass, HttpStatus.OK);
+    }
 
-
-
-
-
-
+    @GetMapping("/validate/{token}")
+    public Boolean validate(@PathVariable String token){
+        return userService.validate(token);
+    }
 }

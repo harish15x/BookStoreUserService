@@ -121,20 +121,31 @@ public class UserService implements IUserService{
                 isUserAvailable.get().setPassword(newPassword);
                 userRepository.save(isUserAvailable.get());
             }
+            throw new UserNotFoundException(400, "token is wrong");
         }
-        return null;
+        throw new UserNotFoundException(400, "user not found");
     }
 
-//    public Response forgetPassword(String emailId) {
-//    Optional<UserModel> isEmailPresent = userRepository.findByEmailId(emailId);
-//        if (isEmailPresent.isPresent()) {
-//        String token = tokenUtil.createToken(isEmailPresent.get().getId());
-//        String url = "http://localhost:8095/user/changePassword";
-//        String subject = "reset password";
-//        String body = "For reset password click this link" + url + "use this to reset" + token;
-//        mailService.send(isEmailPresent.get().getEmailId(), body, subject);
-//    }
-//        return new Response("Success", 200, isEmailPresent.get());
-//}
+    public ResponseClass forgetPassword(String emailId) {
+    Optional<UserModel> isEmailPresent = userRepository.findByEmailId(emailId);
+        if (isEmailPresent.isPresent()) {
+        String token = tokenUtil.createToken(isEmailPresent.get().getId());
+        String url = "http://localhost:8095/user/forgetPassword";
+        String subject = "forget password";
+        String body = "For forget password click this link" + url + "use this to reset" + token;
+        mailService.send(isEmailPresent.get().getEmailId(), body, subject);
+    }
+        return new ResponseClass(200, "Success", isEmailPresent.get());
+    }
+
+        @Override
+        public Boolean validate(String token){
+            Long userId = tokenUtil.decodeToken(token);
+            Optional<UserModel> isUser = userRepository.findById(userId);
+            if (isUser.isPresent()){
+                return true;
+            }
+            return false;
+        }
 
 }

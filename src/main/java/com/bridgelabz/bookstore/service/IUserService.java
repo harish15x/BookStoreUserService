@@ -22,4 +22,8 @@ public interface IUserService {
     Boolean verifyToken(String token);
 
     ResponseClass resetPassword(long userId, String token, String newPassword);
+
+    ResponseClass forgetPassword(String emailId);
+
+    Boolean validate(String token);
 }
